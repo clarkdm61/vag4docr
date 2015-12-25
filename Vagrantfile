@@ -85,8 +85,8 @@ su -l vagrant << EOF
 whoami
 mkdir ~/.aws
 echo '[default]' > ~/.aws/credentials
-echo 'aws_access_key_id = AKIAIWGKMRT4A664ZNTA' >> ~/.aws/credentials
-echo 'aws_secret_access_key = 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' >> ~/.aws/credentials
+echo 'aws_access_key_id = <accessid>' >> ~/.aws/credentials
+echo 'aws_secret_access_key = <secret>' >> ~/.aws/credentials
 echo '[default]' > ~/.aws/config
 echo 'output = text' >> ~/.aws/config
 echo 'region = us-east-1' >> ~/.aws/config
