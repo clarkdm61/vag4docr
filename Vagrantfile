@@ -12,8 +12,8 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "hashicorp/precise64"
-
+  #config.vm.box = "hashicorp/precise64"
+  config.vm.box = "box-cutter/ubuntu1404-desktop"
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -26,7 +26,7 @@ Vagrant.configure(2) do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.33.10"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -43,14 +43,15 @@ Vagrant.configure(2) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  #config.vm.provider "virtualbox" do |vb|
+  config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
   # vb.memory = "1024"
-  #  vb.memory = "3072"
-  # end
+    vb.memory = "3072"
+    vb.cpus = 2
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -67,14 +68,21 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
-    sudo apt-get install -y apache2 git ansible python2.7 python-pip
+    sudo apt-get install -y git python2.7 python-pip software-properties-common
+    sudo apt-add-repository ppa:ansible/ansible
+    sudo apt-get update
+    sudo apt-get install ansible
     pip install awscli
+    # https://codeforgeek.com/2014/09/install-atom-editor-ubuntu-14-04/
+    sudo add-apt-repository ppa:webupd8team/atom
+    sudo apt-get update
+    sudo apt-get install atom
   SHELL
 
-  config.vm.provision "shell", inline: $awsconfig
+config.vm.provision "shell", inline: $awsconfig
 
-  config.vm.provision "docker",
-    images: ["centos"]
+  #config.vm.provision "docker",
+  #  images: ["centos"]
 
 end
 
@@ -85,11 +93,15 @@ su -l vagrant << EOF
 whoami
 mkdir ~/.aws
 echo '[default]' > ~/.aws/credentials
-echo 'aws_access_key_id = <accessid>' >> ~/.aws/credentials
-echo 'aws_secret_access_key = <secret>' >> ~/.aws/credentials
+echo 'aws_access_key_id = XXX' >> ~/.aws/credentials
+echo 'aws_secret_access_key = XXX' >> ~/.aws/credentials
 echo '[default]' > ~/.aws/config
 echo 'output = text' >> ~/.aws/config
 echo 'region = us-east-1' >> ~/.aws/config
+mkdir ~/.ssh
+echo '-----BEGIN RSA PRIVATE KEY-----
+XXXX
+-----END RSA PRIVATE KEY-----' > ~/.ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
 EOF
 SCRIPT
-
